@@ -16,9 +16,11 @@ Owner: Grisha
 - Scanner checks:
   - `gitleaks`
   - `trufflehog`
-- GitHub auth checks:
-  - `gh auth status`
-  - `gh auth setup-git`
+- GitHub OAuth device-flow checks:
+  - `chi login` displays verification URL/code and requested scopes
+  - authorization succeeds without requiring `gh auth token`
+  - no GitHub token is printed or stored
+  - `gh auth` remains optional for private Git package installation until npm publishing
 - Pi package install/update commands.
 - Henkaku-provided provider auth checks for Codex/Gemini/Claude through Pi/dev.exe.
 - Smoke scripts:
@@ -42,6 +44,8 @@ Owner: Grisha
 For private GitHub sources during beta:
 
 ```bash
+# OAuth device flow is the normal Chi login path. GitHub CLI auth is only
+# needed for private Git package installation before npm publication.
 gh auth login
 gh auth setup-git
 
@@ -73,7 +77,7 @@ Create `scripts/smoke-dev-exe.sh` with phases:
 1. Environment:
    - print versions of `pi`, `node`, `npm`, `gh`, `git`, `gitleaks`, `trufflehog`
 2. Auth:
-   - `gh auth status`
+   - `chi login` device-flow success with minimal-scope consent
    - Pi model/provider listing or minimal no-output auth check
 3. Install:
    - `pi install` pinned refs
