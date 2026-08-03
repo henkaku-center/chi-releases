@@ -1,0 +1,31 @@
+{
+  "name": "@henkaku-center/chi",
+  "version": "0.1.0-alpha.0",
+  "description": "The complete Chi Pi package distribution.",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "files": ["README.md", "MVP_PLAN.md", "docs", "packages.env", "scripts"],
+  "dependencies": {
+    "@henkaku-center/chi-base": "0.1.0",
+    "@henkaku-center/chi-buzz": "0.1.0",
+    "@henkaku-center/chi-sync": "0.1.0-alpha.0",
+    "@henkaku-center/chi-commons": "0.1.0",
+    "@henkaku-center/jsonl-reduce": "0.1.0"
+  },
+  "bundledDependencies": [
+    "@henkaku-center/chi-base",
+    "@henkaku-center/chi-buzz",
+    "@henkaku-center/chi-sync",
+    "@henkaku-center/chi-commons",
+    "@henkaku-center/jsonl-reduce"
+  ],
+  "pi": {
+    "extensions": [
+      "node_modules/@henkaku-center/chi-base/src/extension.ts",
+      "node_modules/@henkaku-center/chi-buzz/src/extension.ts",
+      "node_modules/@henkaku-center/chi-sync/src/extension.ts",
+      "node_modules/@henkaku-center/chi-commons/src/extension.ts"
+    ]
+  },
+  "publishConfig": { "access": "public" }
+}

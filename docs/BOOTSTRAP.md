@@ -60,8 +60,9 @@ If `pi` is not found afterwards, your npm global bin is not on `PATH`
 
 ## 2. GitHub auth (required before package install)
 
-The Chi beta packages live in private GitHub repos. `pi install` clones them
-over HTTPS, so git must be able to authenticate via `gh`:
+Until npm publication, the Chi beta packages live in private GitHub repos.
+`pi install` clones them over HTTPS, so git must be able to authenticate via
+`gh`:
 
 ```bash
 gh auth login          # choose GitHub.com, HTTPS, login via browser
@@ -83,6 +84,18 @@ pi install https://github.com/henkaku-center/chi-buzz
 pi install https://github.com/henkaku-center/chi-sync
 pi install https://github.com/henkaku-center/chi-commons
 pi list    # all four should appear
+```
+
+Once published, the canonical full-stack install is:
+
+```bash
+pi install npm:@henkaku-center/chi
+```
+
+Individual published packages remain available, for example:
+
+```bash
+pi install npm:@henkaku-center/chi-sync
 ```
 
 Notes:
