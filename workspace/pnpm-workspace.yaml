@@ -1,0 +1,20 @@
+packages:
+  - chi-base
+  - chi-buzz
+  - chi-sync
+  - chi-commons
+  - jsonl-reduce
+# Distribution specs are github: refs; inside this workspace always link the
+# local checkouts instead of fetching from GitHub.
+overrides:
+  # Yanked upstream; pin to the latest published releases.
+  "@aws-sdk/token-providers": 3.1095.0
+  "@smithy/node-http-handler": 4.9.11
+  "@henkaku-center/chi-base": workspace:*
+  "@henkaku-center/chi-sync": workspace:*
+  "@henkaku-center/chi-commons": workspace:*
+  "@henkaku-center/jsonl-reduce": workspace:*
+allowBuilds:
+  '@google/genai': false
+  esbuild: true
+  protobufjs: true

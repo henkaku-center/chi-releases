@@ -53,3 +53,16 @@ scripts/smoke-dev-exe.sh --list   # available phases: env auth install load manu
 ```
 
 See [MVP_PLAN.md](MVP_PLAN.md) for scope and acceptance criteria.
+
+## Dev workspace
+
+The sibling checkouts form one pnpm workspace. To (re)create it:
+
+```bash
+cd ~/chi/github/henkaku-center
+cp chi-releases/workspace/pnpm-workspace.yaml .
+pnpm install
+```
+
+The workspace file overrides the packages' `github:` distribution specs with
+local `workspace:*` links so development always runs against the checkouts.
