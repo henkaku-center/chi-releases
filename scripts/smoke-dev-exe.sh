@@ -174,11 +174,14 @@ phase_load() {
 phase_manual() {
   hdr "Phase 5-7: manual smoke steps (interactive)"
   cat <<'EOF'
-  Run inside the Pi TUI (see docs/BOOTSTRAP.md section 6 for details):
+  Run inside the Pi TUI (see docs/BOOTSTRAP.md sections 7-8 for details):
 
   [5a] /chi opens                 -> start pi, type /chi
-  [5b] @mention cohort fallback   -> type @, completion offers cohort handles
-                                     even with no cohort config present
+  [5b] @mention cohort fallback   -> configure cohort in /chi first; type @,
+                                     completion offers cohort handles even
+                                     with the relay unavailable
+  [5c] buzz allowlist             -> relay message from non-cohort pubkey is
+                                     ignored; cohort pubkey arrives
   [6a] /sync scanner gate         -> hide gitleaks from PATH, /sync must fail
                                      with an install hint BEFORE syncing;
                                      restore PATH, /sync must pass

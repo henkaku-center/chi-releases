@@ -151,7 +151,15 @@ On first start in a project containing `.pi/settings.json`, Pi asks you to
 trust the project. Approve it so project-local package refs load (or run
 `pi --approve` / `pi -a` once).
 
-## 7. Manual MVP smoke steps
+## 7. Configure the cohort (required for Buzz)
+
+Chi Buzz only reacts to relay messages from configured cohort keys; with no
+cohort it stays silent by design. In `/chi` (base module settings), add each
+participant to `cohort` with their `github` handle and `relayPublicKey`
+(the hex pubkey matching their `BUZZ_PRIVATE_KEY`). Collect pubkeys
+out-of-band from each participant before the workshop.
+
+## 8. Manual MVP smoke steps
 
 Run these inside the Pi TUI after bootstrap. Automated pre-checks:
 `scripts/smoke-dev-exe.sh` (phases 1–4 are non-interactive).
@@ -160,13 +168,15 @@ Run these inside the Pi TUI after bootstrap. Automated pre-checks:
    with no load errors.
 2. **`/chi` opens** — type `/chi`; the command must exist and open.
 3. **`@mention` fallback** — type `@` in the composer; completion should
-   offer cohort handles. With no cohort config present, the fallback list
-   must still appear (not an empty/broken completion).
-4. **`/sync` scanner gate** — temporarily move `gitleaks` off `PATH`
+   offer the configured cohort handles even with the relay unavailable.
+4. **Buzz allowlist** — a relay message from a pubkey *not* in the cohort
+   must be ignored (no session injection); one from a cohort key must
+   arrive.
+5. **`/sync` scanner gate** — temporarily move `gitleaks` off `PATH`
    (`PATH=$(echo "$PATH" | tr ':' '\n' | grep -v '.local/bin' | paste -sd:)`)
    and run `/sync`: it must fail *before* syncing with a message telling you
    to install the scanner. Restore `PATH` and `/sync` again: it should pass.
-5. **Fresh-machine hydrate/resume** — in a new shell:
+6. **Fresh-machine hydrate/resume** — in a new shell:
 
    ```bash
    export PI_CODING_AGENT_DIR=$(mktemp -d)
@@ -175,7 +185,7 @@ Run these inside the Pi TUI after bootstrap. Automated pre-checks:
 
    Run the chi hydrate/resume flow; the prior session must be recoverable
    from sync storage on this "clean machine".
-6. **Commons R1 insertion** — run `/commons` and insert R1 historical
+7. **Commons R1 insertion** — run `/commons` and insert R1 historical
    context from a reduced fixture session; verify context appears in the
    conversation without raw log leakage.
 
