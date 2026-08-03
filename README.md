@@ -26,12 +26,20 @@ pi install npm:@henkaku-center/chi-commons
 
 Until publication, the smoke script uses private GitHub package sources.
 
-Development uses checked-out packages, not npm publication. From a project with
-all Chi repositories available locally:
+Development uses checked-out packages, not npm publication. To dogfood all
+extensions from one orchestrator session:
 
 ```bash
-scripts/dev-install.sh ~/chi/workshop
-# start/restart pi in that project; use /reload after editing an extension
+cd ~/chi/github/henkaku-center
+./chi-releases/scripts/dev-pi.sh
+```
+
+The agent runs from the package parent and can edit all sibling repositories.
+Use `/reload` after edits; push each repository independently. For a normal
+project session with local package settings, use `scripts/dev-install.sh`:
+
+```bash
+./chi-releases/scripts/dev-install.sh ~/chi/workshop
 ```
 
 Set `CHI_SOURCE_ROOT` when the repositories are not siblings. The script writes
