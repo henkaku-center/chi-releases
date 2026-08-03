@@ -35,17 +35,15 @@ cd ~/chi/github/henkaku-center
 ```
 
 The agent runs from the package parent and can edit all sibling repositories.
-Use `/reload` after edits; push each repository independently. For a normal
-project session with local package settings, use `scripts/dev-install.sh`:
+After an extension edit, exit Pi and resume through the same launcher:
 
 ```bash
-./chi-releases/scripts/dev-install.sh ~/chi/workshop
+./chi-releases/scripts/dev-pi.sh --continue
 ```
 
-Set `CHI_SOURCE_ROOT` when the repositories are not siblings. The script writes
-project-local `.pi/settings.json` entries pointing directly at those checkouts.
-Commits pushed to `main` are immediately available to the local loop; npm is
-only needed for deliberate public releases.
+This keeps one source for every module even when released Chi packages are also
+installed globally. Push each repository independently; npm is only needed for
+deliberate public releases.
 
 Quick start on a bootstrapped machine:
 

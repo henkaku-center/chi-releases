@@ -73,22 +73,20 @@ gh auth status         # must show: Logged in to github.com
 If `pi install` later fails with a clone/auth error, the fix is here — not
 in npm. Re-run `gh auth status` and `gh auth setup-git` first.
 
-## 3. Local development install (preferred for contributors)
+## 3. Local development (preferred for contributors)
 
-Do not wait for npm while developing extensions. Clone the Chi package
-repositories as siblings under one directory, then wire their source paths into
-the workshop project:
+Clone the Chi repositories as siblings, then launch their source directly:
 
 ```bash
-export CHI_SOURCE_ROOT="$HOME/chi/github/henkaku-center"
-cd "$HOME/chi/releases"
-scripts/dev-install.sh "$HOME/chi/workshop"
+cd "$HOME/chi/github/henkaku-center"
+./chi-releases/scripts/dev-pi.sh
 ```
 
-Start Pi in that project. After changing an extension, use `/reload`; Pi reloads
-the local source without reinstalling a package. Push commits to `main` as
-usual. Only use the published install below when validating a deliberate public
-release.
+After changing an extension, exit Pi and resume with
+`./chi-releases/scripts/dev-pi.sh --continue`. Restarting is fast and avoids
+mixing explicit local extensions with globally installed Chi packages during a
+runtime reload. Push commits to `main` as usual. Only use the published install
+below when validating a deliberate public release.
 
 ## 4. Published/beta package install
 

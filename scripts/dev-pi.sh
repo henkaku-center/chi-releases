@@ -5,8 +5,8 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
 
 # Run one Pi session with every checked-out Chi extension loaded directly from
-# source. This is the orchestrator/development entrypoint; no npm install is
-# involved when source files change. Use /reload after edits.
+# source. Restart with --continue after edits; reloading can mix these explicit
+# paths with globally installed Chi packages.
 #
 # Keep the installed auth extension explicit: --no-extensions disables normal
 # package discovery, and Claude OAuth otherwise falls back to Pi's built-in
@@ -20,7 +20,6 @@ args=(
   -e "$ROOT/chi-buzz/src/extension.ts"
   -e "$ROOT/chi-sync/src/extension.ts"
   -e "$ROOT/chi-commons/src/extension.ts"
-  -e "$ROOT/chi-releases/scripts/dev-reload.ts"
 )
 if [[ -f "$AUTH_EXTENSION" ]]; then
   args+=( -e "$AUTH_EXTENSION" )
