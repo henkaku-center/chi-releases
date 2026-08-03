@@ -22,7 +22,7 @@ mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
 for package in "${packages[@]}"; do
   echo "linking $package from $SOURCE_ROOT/$package"
-  pi install -l "$SOURCE_ROOT/$package"
+  pi install -l --approve "$SOURCE_ROOT/$package"
 done
 
 cat <<'EOF'
