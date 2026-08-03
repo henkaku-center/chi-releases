@@ -73,7 +73,24 @@ gh auth status         # must show: Logged in to github.com
 If `pi install` later fails with a clone/auth error, the fix is here — not
 in npm. Re-run `gh auth status` and `gh auth setup-git` first.
 
-## 3. Install Chi packages (in order)
+## 3. Local development install (preferred for contributors)
+
+Do not wait for npm while developing extensions. Clone the Chi package
+repositories as siblings under one directory, then wire their source paths into
+the workshop project:
+
+```bash
+export CHI_SOURCE_ROOT="$HOME/chi/github/henkaku-center"
+cd "$HOME/chi/releases"
+scripts/dev-install.sh "$HOME/chi/workshop"
+```
+
+Start Pi in that project. After changing an extension, use `/reload`; Pi reloads
+the local source without reinstalling a package. Push commits to `main` as
+usual. Only use the published install below when validating a deliberate public
+release.
+
+## 4. Published/beta package install
 
 Pinned refs live in [`packages.env`](../packages.env) at the repo root.
 Install in this order — `chi-base` first:
@@ -104,7 +121,7 @@ Notes:
   it separately unless it becomes its own Pi package.
 - To update later: `pi update`.
 
-## 4. Provider auth (Codex / Gemini / Claude)
+## 5. Provider auth (Codex / Gemini / Claude)
 
 Henkaku provides provider access for the beta. Pi reads provider credentials
 from environment variables or its own auth store. Validate **without printing
@@ -123,7 +140,7 @@ pi --list-models | head
 Never `echo` a key, paste one into a session, or commit one. The `/sync`
 scanner gate exists to catch exactly that, but do not rely on it.
 
-## 5. Start Pi in the workshop project
+## 6. Start Pi in the workshop project
 
 ```bash
 mkdir -p ~/chi/workshop && cd ~/chi/workshop
@@ -134,7 +151,7 @@ On first start in a project containing `.pi/settings.json`, Pi asks you to
 trust the project. Approve it so project-local package refs load (or run
 `pi --approve` / `pi -a` once).
 
-## 6. Manual MVP smoke steps
+## 7. Manual MVP smoke steps
 
 Run these inside the Pi TUI after bootstrap. Automated pre-checks:
 `scripts/smoke-dev-exe.sh` (phases 1–4 are non-interactive).

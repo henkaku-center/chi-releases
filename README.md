@@ -26,6 +26,19 @@ pi install npm:@henkaku-center/chi-commons
 
 Until publication, the smoke script uses private GitHub package sources.
 
+Development uses checked-out packages, not npm publication. From a project with
+all Chi repositories available locally:
+
+```bash
+scripts/dev-install.sh ~/chi/workshop
+# start/restart pi in that project; use /reload after editing an extension
+```
+
+Set `CHI_SOURCE_ROOT` when the repositories are not siblings. The script writes
+project-local `.pi/settings.json` entries pointing directly at those checkouts.
+Commits pushed to `main` are immediately available to the local loop; npm is
+only needed for deliberate public releases.
+
 Quick start on a bootstrapped machine:
 
 ```bash
