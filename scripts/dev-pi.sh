@@ -12,4 +12,5 @@ exec pi --no-extensions \
   -e "$ROOT/chi-buzz/src/extension.ts" \
   -e "$ROOT/chi-sync/src/extension.ts" \
   -e "$ROOT/chi-commons/src/extension.ts" \
+  -e "$ROOT/chi-releases/scripts/dev-reload.ts" \
   "$@"
