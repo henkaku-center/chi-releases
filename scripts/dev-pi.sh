@@ -7,10 +7,25 @@ cd "$ROOT"
 # Run one Pi session with every checked-out Chi extension loaded directly from
 # source. This is the orchestrator/development entrypoint; no npm install is
 # involved when source files change. Use /reload after edits.
-exec pi --no-extensions \
-  -e "$ROOT/chi-base/src/extension.ts" \
-  -e "$ROOT/chi-buzz/src/extension.ts" \
-  -e "$ROOT/chi-sync/src/extension.ts" \
-  -e "$ROOT/chi-commons/src/extension.ts" \
-  -e "$ROOT/chi-releases/scripts/dev-reload.ts" \
-  "$@"
+#
+# Keep the installed auth extension explicit: --no-extensions disables normal
+# package discovery, and Claude OAuth otherwise falls back to Pi's built-in
+# provider path (which can have different billing/quota behavior).
+PI_DIR=${PI_CODING_AGENT_DIR:-"$HOME/.pi/agent"}
+AUTH_EXTENSION="$PI_DIR/npm/node_modules/pi-claude-auth/src/index.ts"
+
+args=(
+  --no-extensions
+  -e "$ROOT/chi-base/src/extension.ts"
+  -e "$ROOT/chi-buzz/src/extension.ts"
+  -e "$ROOT/chi-sync/src/extension.ts"
+  -e "$ROOT/chi-commons/src/extension.ts"
+  -e "$ROOT/chi-releases/scripts/dev-reload.ts"
+)
+if [[ -f "$AUTH_EXTENSION" ]]; then
+  args+=( -e "$AUTH_EXTENSION" )
+else
+  echo "warning: pi-claude-auth is not installed; Claude subscription auth may differ" >&2
+fi
+
+exec pi "${args[@]}" "$@"
