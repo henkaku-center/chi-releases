@@ -1,0 +1,30 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main, 'snapshots/**']
+permissions:
+  contents: read
+jobs:
+  release-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+      - run: npm install -g npm@11.16.0 --ignore-scripts
+      - run: npm ci --ignore-scripts
+      - run: bash scripts/actionlint.sh
+      - run: npm test
+      - run: npm run test:mutations
+      - run: bash -n scripts/smoke-dev-exe.sh
+      - name: Test an installer when this is a snapshot branch
+        if: ${{ hashFiles('packages/installer/package.json') != '' }}
+        run: |
+          npm ci --prefix packages/installer --ignore-scripts
+          npm --prefix packages/installer test
+          node packages/installer/test/mutations.mjs

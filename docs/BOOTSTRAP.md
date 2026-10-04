@@ -1,5 +1,9 @@
 # Chi beta bootstrap (exe.dev / fresh machine)
 
+> Historical Pi documentation, retained for old links only. Pi is retired;
+> these commands are not the current installer. See [LEGACY-PI.md](LEGACY-PI.md)
+> for exact deprecated versions and [the README](../README.md) for release status.
+
 One clear path from a clean [exe.dev](https://exe.dev) VM (or any fresh Linux
 machine) to a working Pi terminal with the Chi beta modules installed.
 

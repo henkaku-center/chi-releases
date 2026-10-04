@@ -1,0 +1,88 @@
+name: release
+on:
+  push:
+    tags: ['chi-v1.*.*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: ${{ github.repository == 'henkaku-center/chi-releases' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/chi-v1.') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+      - run: node scripts/release-check.mjs
+      - run: npm install -g npm@11.16.0 --ignore-scripts
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npm run test:mutations
+      - run: npm ci --prefix packages/installer --ignore-scripts
+      - run: npm --prefix packages/installer run build
+      - name: Isolated macOS contract
+        if: runner.os == 'macOS'
+        run: node packages/installer/test/run.mjs
+      - name: Network-disabled Linux contract
+        if: runner.os == 'Linux'
+        run: |
+          docker pull node:24.18.0-bookworm
+          docker run --rm --network=none --user node -v "$PWD:/work:ro" -w /work node:24.18.0-bookworm node packages/installer/test/run.mjs
+      - run: node packages/installer/test/mutations.mjs
+      - name: Pack exactly the tested build and calculate checksums
+        if: runner.os == 'Linux'
+        run: node scripts/pack.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: runner.os == 'Linux'
+        with:
+          name: installer
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 7
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: npm-release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24.18.0'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: node scripts/release-check.mjs
+      - run: npm install -g npm@11.16.0 --ignore-scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: installer
+          path: artifacts
+      - name: Verify and publish the tested tarball with public-source provenance
+        run: |
+          cd artifacts
+          sha256sum --strict -c SHA256SUMS
+          sha512sum --strict -c SHA512SUMS
+          VERSION="${GITHUB_REF_NAME#chi-v}"
+          npm publish "henkaku-center-chi-$VERSION.tgz" --access public --provenance --ignore-scripts
+      - name: Create immutable-tag release with checksum assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" --notes "Installer built from the public source snapshot at $GITHUB_SHA. SHA256SUMS and SHA512SUMS cover the npm tarball." \
+            artifacts/*.tgz artifacts/SHA256SUMS artifacts/SHA512SUMS
