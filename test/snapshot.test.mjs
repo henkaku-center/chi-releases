@@ -50,6 +50,19 @@ test('links, hardlinks, special/oversized files and linked parents are refused',
   f.marker.files.LICENSE = digest(readFileSync(path)); f.save(); assert.throws(() => verifySnapshot(f.source, tag, true));
   const linked = join(f.root, 'linked'); symlinkSync(f.source, linked); assert.throws(() => verifySnapshot(linked, tag));
 });
+test('control characters in a path name are refused before allowlist comparison', t => {
+  const f = fixture(t);
+  const tabbed = join(f.source, 'packages/installer/README.md\tprivate-notes.txt');
+  writeFileSync(tabbed, 'private');
+  assert.throws(() => regularFiles(f.source), /Control character in snapshot path/);
+  assert.throws(() => verifySnapshot(f.source, tag, true), /Control character/);
+  rmSync(tabbed);
+  const controlled = join(f.source, 'packages/installer/notes\u0001.txt');
+  writeFileSync(controlled, 'private');
+  assert.throws(() => regularFiles(f.source), /Control character in snapshot path/);
+  rmSync(controlled);
+  assert.doesNotThrow(() => verifySnapshot(f.source, tag, true));
+});
 test('import preserves public control files and ancestry and rejects a dirty checkout', t => {
   const f = fixture(t), destination = join(f.root, 'public'); mkdirSync(destination);
   const git = (...args) => execFileSync('git', args, { cwd: destination, env: { ...process.env, GIT_AUTHOR_NAME: 'mochi-the-kitty', GIT_AUTHOR_EMAIL: 'mochi-the-kitty@users.noreply.github.com', GIT_COMMITTER_NAME: 'mochi-the-kitty', GIT_COMMITTER_EMAIL: 'mochi-the-kitty@users.noreply.github.com' }, stdio: 'pipe' }).toString();

@@ -4,6 +4,14 @@ import { createHash } from 'node:crypto';
 
 export const files = JSON.parse(readFileSync(new URL('./snapshot-files.json', import.meta.url)));
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+// A filename is data, not a separators-delimited identifier. Reject every
+// control character up front so a tab or newline in a name can never be
+// truncated, re-joined or compared as if it were an allowlisted path.
+const CONTROL_CHARS = /[\u0000-\u001f\u007f]/;
+function assertSafePath(path) {
+  if (CONTROL_CHARS.test(path)) throw new Error('Control character in snapshot path');
+  return path;
+}
 export function releaseManifest(manifest, tag) {
   if (manifest.name !== '@henkaku-center/chi' || manifest.private !== false || !/^1\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(manifest.version) || tag !== `chi-v${manifest.version}`) throw new Error('Requires reviewed public installer and exact stable 1.x tag');
   if (manifest.repository?.url !== 'git+https://github.com/henkaku-center/chi-releases.git' || manifest.repository?.directory !== 'packages/installer') throw new Error('Wrong public source repository');
@@ -12,6 +20,7 @@ export function releaseManifest(manifest, tag) {
 export function regularFiles(root) {
   const paths = [];
   function walk(path = '') {
+    assertSafePath(path);
     const stat = lstatSync(join(root, path));
     if (stat.isSymbolicLink()) throw new Error('Symlinks forbidden');
     if (stat.isDirectory()) {
@@ -36,6 +45,7 @@ export function verifySnapshot(root, tag, isolated = false) {
 // snapshot inputs, but no build/test script may silently rewrite those inputs.
 export function verifyInputs(root, tag) {
   function read(path) {
+    assertSafePath(path);
     let current = root;
     for (const part of path.split('/')) {
       current = join(current, part);

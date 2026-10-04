@@ -7,6 +7,7 @@ const cases = [
   ['scripts/snapshot.mjs', 'manifest.publishConfig ||', 'false ||'],
   ['scripts/snapshot.mjs', 'manifest.tag !== tag', 'false'],
   ['scripts/snapshot.mjs', 'digest(read(path)) !== manifest.files[path]', 'false'],
+  ['scripts/snapshot.mjs', 'assertSafePath(path);', ''],
   ['scripts/snapshot.mjs', 'if (isolated &&', 'if (false &&'],
   ['scripts/snapshot.mjs', 'if (JSON.stringify(regularFiles(join(root,', 'if (false && JSON.stringify(regularFiles(join(root,'],
   ['scripts/snapshot.mjs', 'stat.nlink === 1', 'true'],
