@@ -64,7 +64,12 @@ Release authority and outstanding operator actions are in
 ## 2. Keep authorization separate
 
 - **GitHub project access:** the intended human must be able to read the shared
-  project, and the selected Chi deployment must authorize that repository.
+  project, and the selected Chi deployment must authorize that repository. This
+  requires its GitHub App installation to include the project as well as the
+  human's repository permission. A local mapping or successful login grants
+  neither. An organization owner can install the deployment's verified App with
+  **Only select repositories**, selecting just the intended project. Review its
+  current permissions in GitHub; do not grant all repositories to fix one mapping.
 - **Chi authentication:** each human authorizes the deployment under their own
   account. Repository access alone does not mean they are discoverable as a Chi
   participant; first-time recipients may need to authenticate before appearing.
@@ -86,12 +91,14 @@ paseo daemon status
 gitleaks version
 ```
 
-Version output and a reachable daemon are not sufficient. Verify the connected
-daemon advertises Chi native capture and mentions, the app recognizes them, and
-the deployment admits v3 append and handoff operations. A daemon can accept a
-`chi` configuration while still advertising these capabilities as disabled.
-If disabled, report the runtime mismatch and arrange its supported rollout; a
-config reload does not install missing runtime behavior.
+Version output and a reachable daemon are not sufficient. Use the client shipped
+with the serving runtime to check `chiAppendV3`, `chiPinnedTimeline` and
+`chiInboxActivity`, and verify the deployment admits v3 append and handoff
+operations. The v3 runtime deliberately sets legacy `chiNative`, `chiMentions`
+and `chiInbox` flags to false; an older client may discard the new flags and
+incorrectly report that an upgrade is needed. Those legacy flags alone do not
+diagnose a missing runtime or failed authorization. If the actual v3 capabilities
+are absent, report the runtime mismatch; a config reload does not install them.
 
 On a verified host, generate an offer using the installed launcher's correct home:
 
@@ -165,9 +172,9 @@ coordinate its documented runtime rollout and active-session drain first.
 | Observation | Next check |
 | --- | --- |
 | No public v1 release | Report new-host installation blocked; do not request private source access. |
-| Daemon reachable, Chi capabilities false | Verify serving runtime/build with the operator; mapping alone cannot enable it. |
+| Daemon reachable, legacy Chi flags false | Check v3 flags using the matching installed client before diagnosing a runtime problem. |
 | Workspace stays local | Check GitHub origin, exact mapping, selected daemon home and reload result. |
-| Project denied/missing | Verify recipient account, project permission and deployment repository authorization. |
+| Project denied/missing | Verify account, project permission and the deployment's GitHub App installation for this specific repository. `chi-repository-denied` means the authorized catalog omitted it; it is not a host-pairing failure. |
 | Recipient absent | Confirm their exact handle and that they authenticated to this deployment; do not send a guessed mention. |
 | Capture blocked | Read the safe status reason; check gitleaks and supported runtime. Do not bypass scanning or reset evidence. |
 | Shared conversation will not open | Recheck current authorization, connection and exact pin; do not substitute local history. |
