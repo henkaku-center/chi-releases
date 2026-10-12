@@ -1,4 +1,30 @@
-# Chi installer releases
+# Chi: shared conversations for agent work
+
+Chi connects people working with coding agents: share repository-scoped conversation
+evidence, mention a collaborator, and open the exact message behind a request.
+OpenCode runs the agent, Paseo connects its host to the app, and Chi controls shared
+evidence and repository access.
+
+## For collaborators
+
+- Open the [Chi app](https://chi.henkaku.center) and use **your own GitHub account**
+  for Chi authorization. Access is checked against the **project being shared**;
+  you do not need access to Chi's private development repository.
+- A received mention opens a **read-only** shared conversation. Reading that view
+  needs no local project checkout or running agent. This is not a promise of a
+  host-free inbox: the current Paseo app's host connection and Chi authorization
+  are separate, and another person's paired host does not establish your identity.
+- Full own-host setup is **not publicly installable yet**. As checked October 12,
+  2026, this repository has no releases or installer snapshot tags, and npm
+  `latest` is the deprecated Pi package `0.3.0`. Do not run it to install this stack.
+- Current v3 shared reading does not establish working replies, checked resolution
+  or Continue. Ask the sender to confirm your access and supported reading route
+  before relying on a mention for a handoff.
+
+[Agent setup and verification](docs/AGENT-SETUP.md) gives the detailed readiness
+checks, authentication boundaries and existing-host configuration procedure.
+
+## Installer releases
 
 Public source snapshots and release automation for `@henkaku-center/chi@1.x`.
 The installer is still an **unpublished candidate**. This migration does not
