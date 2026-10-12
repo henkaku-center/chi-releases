@@ -8,14 +8,21 @@ someone else's execution host as a substitute for their own identity.
 
 ## 1. Choose the task and check availability
 
+**Joining as a collaborator:** open the [Chi app](https://chi.henkaku.center)
+and choose **Connect with GitHub**. Its personal sign-in page is
+[Chi Connect](https://chi.henkaku.center/connect/). Authorize Chi with the intended
+human's own GitHub account, then check the project's access. Personal sign-in
+registers a participant; it is not proof of delivery or evidence reading. It needs
+no paired host, model account or private-source installation. Verify actual
+sign-in and project access before claiming success; never sign in as the recipient
+yourself. If the route or sign-in is unavailable, report the deployment blocker.
+
 **Reading shared evidence:** ask the sender for the project and exact shared
-message, open the [Chi app](https://chi.henkaku.center), and authorize Chi with the
-recipient's own GitHub account. A received mention opens an immutable, read-only
-conversation without a local checkout/session. App host connectivity and Chi
-authorization are separate prerequisites; do not infer a standalone browser inbox
-from the fact that the conversation reader is read-only. If the recipient has no
-compatible connected host, ask the operator for a supported recipient route.
-Their real-account access must be verified before claiming onboarding succeeded.
+message. The current host-backed app reader still needs a compatible connected
+host and fresh Chi authorization. A standalone browser evidence reader is deferred;
+do not infer one from the host-free sign-in page. A collaborator who only needs
+registration can stop after Connect. Do not force a private clone or full fork
+installation as a workaround for a missing supported reading route.
 
 **Running agents or sending mentions from a new host:** public distribution is
 blocked as of **October 12, 2026**. The owned installer remains unpublished;
@@ -62,6 +69,61 @@ installation command rather than treating this page as a future executable recip
 Release authority and outstanding operator actions are in
 [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
+### Existing installations: consent and history come first
+
+The target runtime is the release's **Chi-capable Paseo and OpenCode forks**,
+not arbitrary upstream builds. This does not authorize installing them while
+public distribution is blocked.
+
+The current installer candidate uses an isolated owned installation; foreign
+installation replacement, its consent flow and history migration are **not
+implemented or accepted**. The requirements below describe the target workflow,
+not capabilities to assume from that candidate. If a release still lacks them,
+stop replacement rather than creating an unrequested parallel instance or
+renaming existing state directories out from under running programs.
+
+Once an approved release supports the required lifecycle:
+
+1. Privately inventory the exact installed versions, executable paths, installation
+   owners, running tasks, state locations and plugin versions. Do not publish
+   credentials, full configuration, log contents or pairing links.
+2. If the machine already has the matching verified Chi installation, reuse it or
+   update through its owned release path. Do not uninstall a working installation
+   merely to repeat onboarding.
+3. If replacement of another Paseo/OpenCode installation is necessary, explain
+   exactly what will change, how active tasks will drain, which histories and
+   configurations must survive, and how rollback works. **Ask for explicit user
+   permission before uninstalling or replacing anything.** A request for onboarding
+   instructions is not permission to modify the running machine.
+4. Use the release's reviewed consent/reconfigure and backup mechanisms. Back up
+   and verify logs, session IDs/history and configuration before any replacement.
+   Preserve originals until restoration has been verified. Never delete HOME,
+   runtime state, credentials or plugin files as an uninstall shortcut. If safe
+   preservation or recovery cannot be demonstrated, stop and report the blocker.
+   Replacing program files is not deleting application data: never run a generic
+   uninstall command that can purge state. An active SQLite database needs a
+   supported consistent backup including WAL state, not a plain copy of its main
+   file. Preserve Paseo-to-native-session mappings, pairing/host IDs and discovery
+   configuration as well as native history.
+   Trial the exact target version against a private restored copy first. Verify
+   the existing catalog, ordered history, session IDs and reopenability without a
+   model turn or replay. Keep the current working runtime in place until this
+   takeover check passes; no silent second empty instance. Failed trial means
+   retain/restore the old working runtime, not proceed with uninstall.
+5. **OpenCode V1 plugins do not work in V2 without migration.** Preserve their
+   configuration and files safely but keep them inactive until a reviewed V2
+   migration passes. Do not load incompatible plugins or assume every V1 log can
+   be imported, replayed or read equivalently in V2. Record exactly which histories
+   and IDs were preserved and which remain unsupported; keep the original readable
+   backup for unsupported history.
+
+Chi's v3 append-log format is not a promise that OpenCode's native SQLite schema
+or JSON export is stable across versions. Compatibility evidence for one exact
+version pair does not cover all V1/V2 installations. An unknown schema or missing
+version-specific preservation/takeover path means **stop before uninstall and
+report that migration is required**. Renaming a V1 plugin configuration is not a
+V2 implementation migration.
+
 ## 2. Keep authorization separate
 
 - **GitHub project access:** the intended human must be able to read the shared
@@ -74,6 +136,13 @@ Release authority and outstanding operator actions are in
 - **Chi authentication:** each human authorizes the deployment under their own
   account. Repository access alone does not mean they are discoverable as a Chi
   participant; first-time recipients may need to authenticate before appearing.
+  The welcome screen's **Connect with GitHub** is one guided entry point, not a
+  claim that personal authorization and App installation are the same grant.
+  Collaborators on an already integrated repository sign in without reinstalling
+  the App. If a project is missing, an owner/administrator can connect it once
+  through the deployment's verified integration link, then the collaborator
+  rechecks access. Do not enable a new OAuth callback flow or change App settings
+  merely to make these steps look combined.
 - **Daemon pairing:** connects a browser/device to an execution host. Keep the
   pairing offer private. It does not log the recipient into GitHub or Chi.
 - **Model/provider authentication:** belongs to the execution host and is separate
