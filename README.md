@@ -21,7 +21,7 @@ evidence and repository access.
   or Continue. Ask the sender to confirm your access and supported reading route
   before relying on a mention for a handoff.
 
-[Agent setup and verification](docs/AGENT-SETUP.md) gives the detailed readiness
+**[Agent setup and verification — AGENTS.md](AGENTS.md)** gives the detailed readiness
 checks, authentication boundaries and existing-host configuration procedure.
 
 ## Installer releases

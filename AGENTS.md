@@ -1,6 +1,7 @@
-# Agent-assisted collaborator setup
+# Agent instructions and collaborator setup
 
-This is the public onboarding entry point. A collaborator needs access to the
+Use this root guide when assisting a collaborator with Chi setup. It is the
+authoritative public agent onboarding entry point. A collaborator needs access to the
 **shared project repository**, not the private Chi development repository. Do not
 ask them to clone private source, borrow another person's credentials or pair to
 someone else's execution host as a substitute for their own identity.
@@ -59,7 +60,7 @@ The candidate tools use Node 24.18.0, gh 2.70.0 and gitleaks 8.24.2; these pins 
 not clean-host acceptance. Follow the eventual release's pins and versioned
 installation command rather than treating this page as a future executable recipe.
 Release authority and outstanding operator actions are in
-[OPERATIONS.md](OPERATIONS.md).
+[docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## 2. Keep authorization separate
 
