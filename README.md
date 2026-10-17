@@ -14,9 +14,11 @@ evidence and repository access.
   needs no local project checkout or running agent. This is not a promise of a
   host-free inbox: the current Paseo app's host connection and Chi authorization
   are separate, and another person's paired host does not establish your identity.
-- Full own-host setup is **not publicly installable yet**. As checked October 12,
-  2026, this repository has no releases or installer snapshot tags, and npm
-  `latest` is the deprecated Pi package `0.3.0`. Do not run it to install this stack.
+- **Fresh-host installer 1.0.0 is published**, verified October 17, 2026. Follow
+  [the exact release](https://github.com/henkaku-center/chi-releases/releases/tag/chi-v1.0.0)
+  and [setup/verification instructions](AGENTS.md); no private Chi checkout is
+  required. Existing-install takeover is not supported. Versions below 1 remain
+  retired Pi packages, not an installation fallback.
 - Current v3 shared reading does not establish working replies, checked resolution
   or Continue. Ask the sender to confirm your access and supported reading route
   before relying on a mention for a handoff.
@@ -27,20 +29,35 @@ checks, authentication boundaries and existing-host configuration procedure.
 ## Installer releases
 
 Public source snapshots and release automation for `@henkaku-center/chi@1.x`.
-The installer is still an **unpublished candidate**. This migration does not
-publish a package, create a tag, or enable a trusted publisher. The npm `latest`
-version is still the deprecated Pi distribution; do not use an unversioned
-`npx @henkaku-center/chi` as a new-install instruction yet.
+The first release is **`@henkaku-center/chi@1.0.0`**, tag **`chi-v1.0.0`**,
+public source **`88db51338ba89339d602ee8ca077999b5698053c`**. The registry tarball,
+tested artifact and GitHub release asset match, with verified npm signature and
+Sigstore provenance from this repository's `release.yml` and exact tag.
+Tarball SHA-256: `d61aeb1c51a001bef305f90bca469a3d295091fa7a09099ca70cd927b1ff8c9c`.
+
+After checking the release, host and consent requirements in [AGENTS.md](AGENTS.md):
+
+```sh
+npx --yes @henkaku-center/chi@1.0.0 install --choices /absolute/path/choices.json --dry-run
+```
+
+Review the plan, then omit `--dry-run` and confirm interactively. This builds the
+pinned public forks locally. Real fresh-host supervision and encrypted local-relay
+pairing passed on macOS arm64 and x64. Linux has contract tests, not equivalent
+real clean-host acceptance. Personal authentication and real-account hosted
+collaboration remain separate; installation is not proof of mention delivery.
 
 ## Release boundary
 
 1. A reviewed stable `chi-v1.x.y` tag in the private development repository
    selects **only** the exact files in `scripts/snapshot-files.json`: the
-   standalone installer, its locks/build/tests, license and trust documentation.
+   standalone installer, its locks/build/tests, minimal embedded plugin/helper
+   source closure, license and trust documentation.
    New installer paths require allowlist review in both repositories.
 2. The private export job reads committed blobs (never copies `.git`), refuses
    symlinks/submodules and scans the complete snapshot with pinned gitleaks.
-   It exports no private history, commit metadata, backend, sessions or secrets.
+   It exports no private history, private commit metadata, backend service,
+   sessions or secrets; one allowlisted HTTP helper supports the embedded plugin.
 3. A fresh checkout of **this repository's main** supplies the release tooling.
    The export creates a public-only commit on `snapshots/chi-v1.x.y` and atomically
    pushes that branch plus the matching tag. Main is not changed by the exporter.
@@ -56,8 +73,8 @@ version is still the deprecated Pi distribution; do not use an unversioned
    provenance bound to this repository, `release.yml`, and the exact release tag.
 
 No release runs on pull requests, main pushes, manual dispatch or malformed tags.
-The candidate's `private: true` is a second hard block; changing it requires the
-separate clean-host acceptance and publication review. Exporting source and
+An installer manifest with `private: true` is refused; the 1.0.0 publication flag
+was changed only after clean-host acceptance and publication review. Exporting source and
 publishing npm are distinct privileges. The root package is private tooling;
 only `packages/installer` in a release snapshot is publishable.
 
