@@ -1,0 +1,35 @@
+{
+  "name": "@henkaku-center/chi",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Owned OpenCode, Paseo and Chi collaborator installer (unpublished candidate)",
+  "repository": { "type": "git", "url": "git+https://github.com/henkaku-center/chi-releases.git", "directory": "packages/installer" },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "chi": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "toolchain",
+    "README.md",
+    "TRUST.md"
+  ],
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build.mjs",
+    "test": "npm run build && node test/run.mjs",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@sigstore/bundle": "5.0.0",
+    "@sigstore/mock": "0.13.0",
+    "@sigstore/protobuf-specs": "0.5.0",
+    "@sigstore/verify": "4.1.2",
+    "@types/node": "24.10.1",
+    "esbuild": "0.25.12",
+    "typescript": "6.0.3"
+  }
+}

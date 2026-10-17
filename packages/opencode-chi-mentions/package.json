@@ -1,0 +1,13 @@
+{
+  "name": "@henkaku-center/opencode-chi-mentions",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "description": "Chi participant completions and exact recipient annotations for OpenCode V2",
+  "exports": { ".": "./index.js", "./tui": "./tui.js", "./rpc": "./rpc.js" },
+  "files": ["*.js", "README.md"],
+  "scripts": { "test": "node --test test/*.test.js" },
+  "dependencies": { "@henkaku-center/chi-native": "file:../chi-native", "@opencode/plugin": "2.0.14" },
+  "bundledDependencies": ["@henkaku-center/chi-native"],
+  "peerDependencies": { "solid-js": "^1.9.15" }
+}

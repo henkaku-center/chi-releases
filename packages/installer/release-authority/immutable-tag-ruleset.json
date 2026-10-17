@@ -1,0 +1,8 @@
+{
+  "name": "chi release tags immutable",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": { "ref_name": { "include": ["refs/tags/chi-v*"], "exclude": [] } },
+  "rules": [{ "type": "update" }, { "type": "deletion" }],
+  "bypass_actors": []
+}

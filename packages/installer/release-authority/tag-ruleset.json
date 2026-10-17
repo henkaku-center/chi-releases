@@ -1,0 +1,17 @@
+{
+  "name": "chi release tags",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/tags/chi-v*"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    { "type": "creation" }
+  ],
+  "bypass_actors": [
+    { "actor_id": 17977117, "actor_type": "User", "bypass_mode": "always" }
+  ]
+}
