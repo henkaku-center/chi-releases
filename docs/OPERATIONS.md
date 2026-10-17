@@ -85,8 +85,9 @@ package Settings → Trusted publishing:
 
 Retain a valid matching connection. If npm marks that exact connection expired,
 delete/recreate only it and verify the saved fields/status. Do not change unrelated
-publishers or `jsonl-reduce`. Configure publishing access to require 2FA and disallow
-bypass-2FA tokens; npm states this is compatible with OIDC trusted publishers.
+publishers or `jsonl-reduce`. Prefer publishing access requiring 2FA and disallowing
+bypass-2FA tokens. npm states all access options are compatible with OIDC; changing
+an already-compatible option is not an extra first-dogfood-release blocker.
 Use an existing authenticated browser when available; a CLI 401 alone does not
 establish missing owner access. Stop at an actual security-key/2FA challenge—no
 credential extraction, account switching or token fallback. No `NPM_TOKEN`
