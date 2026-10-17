@@ -14,7 +14,7 @@ test('pack checks distribution membership, preserves tested bytes and hashes exa
   const manifest = { name: '@henkaku-center/chi', version: '1.0.0', private: false, repository: { url: 'git+https://github.com/henkaku-center/chi-releases.git', directory: 'packages/installer' }, files: ['dist', 'TRUST.md'], scripts: { prepack: 'touch lifecycle-ran' } };
   for (const path of files) { mkdirSync(dirname(join(root, path)), { recursive: true }); writeFileSync(join(root, path), 'synthetic input\n'); }
   writeFileSync(join(installer, 'package.json'), JSON.stringify(manifest));
-  for (const path of ['dist/cli.js', 'dist/sigstore.js', 'LICENSE', 'TRUST.md']) writeFileSync(join(installer, path), 'tested bytes\n');
+  for (const path of ['dist/cli.js', 'dist/sigstore.js', 'dist/plugin.js', 'LICENSE', 'TRUST.md']) writeFileSync(join(installer, path), 'tested bytes\n');
   writeFileSync(join(root, '.installer-snapshot.json'), JSON.stringify({ tag: 'chi-v1.0.0', files: Object.fromEntries(files.map(path => [path, digest(readFileSync(join(root, path)))])) }));
   const script = resolve('scripts/pack.mjs');
   const pack = () => spawnSync(process.execPath, [script], { cwd: root, env: { PATH: process.env.PATH, HOME: root, npm_config_cache: join(root, 'npm-cache'), GITHUB_REF_NAME: 'chi-v1.0.0' }, encoding: 'utf8' });
@@ -26,6 +26,8 @@ test('pack checks distribution membership, preserves tested bytes and hashes exa
   rmSync(join(root, 'artifacts'), { recursive: true }); rmSync(join(installer, 'dist/private.env')); rmSync(join(installer, 'dist/sigstore.js'));
   assert.notEqual(pack().status, 0);
   rmSync(join(root, 'artifacts'), { recursive: true }); writeFileSync(join(installer, 'dist/sigstore.js'), 'tested bytes\n');
+  rmSync(join(installer, 'dist/plugin.js')); assert.notEqual(pack().status, 0);
+  rmSync(join(root, 'artifacts'), { recursive: true }); writeFileSync(join(installer, 'dist/plugin.js'), 'tested bytes\n');
   writeFileSync(join(installer, 'package.json'), JSON.stringify({ ...manifest, publishConfig: { provenance: false } }));
   assert.notEqual(pack().status, 0);
 });

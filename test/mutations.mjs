@@ -23,9 +23,10 @@ const cases = [
   ['scripts/pack.mjs', "'--ignore-scripts',", ''],
   ['scripts/pack.mjs', 'verifyInputs(process.cwd(), process.env.GITHUB_REF_NAME)', "JSON.parse(readFileSync('packages/installer/package.json'))"],
   ['scripts/pack.mjs', 'packed.files.some(file => !allowed.test(file.path))', 'false'],
-  ['scripts/pack.mjs', "['dist/cli.js', 'dist/sigstore.js', 'LICENSE', 'TRUST.md'].every", "['dist/cli.js', 'LICENSE', 'TRUST.md'].every"],
+  ['scripts/pack.mjs', "['dist/cli.js', 'dist/sigstore.js', 'dist/plugin.js', 'LICENSE', 'TRUST.md'].every", "['dist/cli.js', 'dist/plugin.js', 'LICENSE', 'TRUST.md'].every"],
+  ['scripts/pack.mjs', "['dist/cli.js', 'dist/sigstore.js', 'dist/plugin.js', 'LICENSE', 'TRUST.md'].every", "['dist/cli.js', 'dist/sigstore.js', 'LICENSE', 'TRUST.md'].every"],
 ];
-function test() { return spawnSync(process.execPath, ['--test', 'test/snapshot.test.mjs', 'test/workflows.test.mjs', 'test/pack.test.mjs'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }); }
+function test() { return spawnSync(process.execPath, ['--test', '--test-concurrency=1', 'test/snapshot.test.mjs', 'test/workflows.test.mjs', 'test/pack.test.mjs'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }); }
 const baseline = test();
 if (baseline.status !== 0) throw new Error(`Baseline failed\n${baseline.stdout}\n${baseline.stderr}`);
 for (const [path, from, to] of cases) {
