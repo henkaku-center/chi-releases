@@ -24,34 +24,39 @@ do not infer one from the host-free sign-in page. A collaborator who only needs
 registration can stop after Connect. Do not force a private clone or full fork
 installation as a workaround for a missing supported reading route.
 
-**Running agents or sending mentions from a new host:** public distribution is
-blocked as of **October 12, 2026**. The owned installer remains unpublished;
-there are no public installer snapshot tags or GitHub release assets here. npm
-has only the retired Pi versions, with `latest` at `0.3.0`. The full stack's
-clean-host build, supervision, pairing and independent publication review remain
-release gates. A workflow or candidate source is not a downloadable release.
+**Running agents or sending mentions from a new host:** fresh-host installer
+**`@henkaku-center/chi@1.0.0`** was published and verified on **October 17, 2026**.
+Its immutable tag is `chi-v1.0.0`, public source commit
+`88db51338ba89339d602ee8ca077999b5698053c`. The registry tarball matches the tested
+artifact and GitHub release asset; npm signature and Sigstore provenance were
+verified against this repository's `release.yml` and exact tag. No private Chi
+checkout or borrowed credentials are required. Versions below 1 remain retired Pi.
 
 Recheck using ordinary public metadata (GitHub CLI needs its own existing login):
 
 ```sh
-gh release list --repo henkaku-center/chi-releases --limit 10
-gh api repos/henkaku-center/chi-releases/git/matching-refs/tags --jq '.[].ref'
-npm view @henkaku-center/chi dist-tags versions --json
+gh release view chi-v1.0.0 --repo henkaku-center/chi-releases
+gh api repos/henkaku-center/chi-releases/git/ref/tags/chi-v1.0.0 --jq '.object.sha'
+npm view @henkaku-center/chi@1.0.0 version dist --json
 ```
 
-Until an approved `chi-v1.x.y` release exists, stop new-host installation and
-report this distribution blocker. Do not use unversioned `npx`, the retired Pi
+If the exact tag/version is missing or verification fails, stop installation and
+report that specific failure; do not infer that a source PR is a release.
+Do not use unversioned `npx`, the retired Pi
 bootstrap scripts, an upstream Paseo/OpenCode build assumed to contain Chi, or a
 private-source clone recipe as public onboarding.
 
-### Version and platform selection when a release exists
+### Version and platform selection
 
 Use that exact release's public installer README and trust policy. Confirm the
 package version matches its tag; inspect its successful release workflow, npm
 provenance and published `SHA256SUMS`/`SHA512SUMS`. The release tooling publishes
 an **npm installer tarball**, not proof of a complete prebuilt runtime for every
-platform. Candidate targets are macOS/Linux, x64/arm64; Windows is not an accepted
-target. Confirm the release actually supports the host reported by:
+platform. Release 1.0.0 passed real fresh-host build, supervision and encrypted
+local-relay pairing on macOS x64 and arm64; those tests used synthetic GitHub
+auth-status admission, not real-account collaboration. Linux x64/arm64 have
+contract tests, not equivalent real clean-host acceptance; Windows is not an
+accepted target. Confirm the host reported by:
 
 ```sh
 uname -s
@@ -63,19 +68,34 @@ gh --version
 gh auth status
 ```
 
-The candidate tools use Node 24.18.0, gh 2.70.0 and gitleaks 8.24.2; these pins are
-not clean-host acceptance. Follow the eventual release's pins and versioned
-installation command rather than treating this page as a future executable recipe.
+Release 1.0.0 pins Node 24.18.0, gh 2.70.0 and gitleaks 8.24.2. Follow the
+[exact installer README](https://github.com/henkaku-center/chi-releases/blob/chi-v1.0.0/packages/installer/README.md)
+for the choices-file schema and
+[trust policy](https://github.com/henkaku-center/chi-releases/blob/chi-v1.0.0/packages/installer/TRUST.md)
+for signature/provenance verification. Tarball SHA-256:
+`d61aeb1c51a001bef305f90bca469a3d295091fa7a09099ca70cd927b1ff8c9c`.
+
+On a fresh supported host, after verification and agreement on the choices:
+
+```sh
+npx --yes @henkaku-center/chi@1.0.0 install --choices /absolute/path/choices.json --dry-run
+```
+
+Review the exact plan, then omit `--dry-run` and confirm interactively. Use the
+person's own GitHub login and provider login. Pairing, repository admission and
+authorized read/mention acceptance remain separate; never test by messaging a
+collaborator without approved content. Do not run this recipe over an existing
+foreign installation: follow the preservation boundary below.
 Release authority and outstanding operator actions are in
 [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ### Existing installations: consent and history come first
 
 The target runtime is the release's **Chi-capable Paseo and OpenCode forks**,
-not arbitrary upstream builds. This does not authorize installing them while
-public distribution is blocked.
+not arbitrary upstream builds. The public release does not authorize replacing
+another installation or bypassing its release verification.
 
-The current installer candidate uses an isolated owned installation; foreign
+Installer 1.0.0 uses an isolated owned installation; foreign
 installation replacement, its consent flow and history migration are **not
 implemented or accepted**. The requirements below describe the target workflow,
 not capabilities to assume from that candidate. If a release still lacks them,
