@@ -19,6 +19,7 @@
   "packages/installer/package.json",
   "packages/installer/plugin-lock.json",
   "packages/installer/release-authority/README.md",
+  "packages/installer/release-authority/immutable-tag-ruleset.json",
   "packages/installer/release-authority/npm-release-environment.json",
   "packages/installer/release-authority/tag-ruleset.json",
   "packages/installer/scripts/build.mjs",
