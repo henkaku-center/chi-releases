@@ -9,6 +9,7 @@
   "packages/opencode-chi-mentions/rpc.js",
   "packages/opencode-chi-mentions/source.js",
   "packages/opencode-chi-mentions/test/plugin.test.js",
+  "packages/opencode-chi-mentions/test/runtime-loader.mjs",
   "packages/opencode-chi-mentions/test/source.test.js",
   "packages/installer/.gitignore",
   "packages/installer/LICENSE",
