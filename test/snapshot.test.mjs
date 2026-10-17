@@ -37,7 +37,9 @@ test('snapshot bytes, membership, tag and manifest metadata are exact', t => {
   const path = join(f.source, 'LICENSE'), bytes = readFileSync(path);
   writeFileSync(path, 'changed'); assert.throws(() => verifySnapshot(f.source, tag, true)); writeFileSync(path, bytes);
   writeFileSync(join(f.source, 'private.txt'), 'private'); assert.throws(() => verifySnapshot(f.source, tag, true)); rmSync(join(f.source, 'private.txt'));
-  writeFileSync(join(f.source, 'packages/installer/src/unreviewed.ts'), '// bypass'); assert.throws(() => verifySnapshot(f.source, tag)); rmSync(join(f.source, 'packages/installer/src/unreviewed.ts'));
+  for (const path of ['packages/installer/src/unreviewed.ts', 'packages/opencode-chi-mentions/unreviewed.js', 'packages/chi-native/unreviewed.ts', 'backend/scripts/unreviewed.ts']) {
+    writeFileSync(join(f.source, path), '// bypass'); assert.throws(() => verifySnapshot(f.source, tag)); rmSync(join(f.source, path));
+  }
   f.marker.files['../escape'] = digest('evil'); f.save(); assert.throws(() => verifySnapshot(f.source, tag, true)); delete f.marker.files['../escape']; f.save();
   rmSync(path); assert.throws(() => verifySnapshot(f.source, tag, true));
 });

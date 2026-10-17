@@ -13,6 +13,7 @@ test('public workflow separates tested build from protected OIDC publish', () =>
   assert.match(build, /run: node scripts\/release-check.mjs/);
   assert.match(build, /npm ci --prefix packages\/installer --ignore-scripts/);
   assert.match(build, /npm --prefix packages\/installer run build/);
+  assert.match(build, /node packages\/installer\/test\/public-plugin.mjs/);
   assert.match(build, /node packages\/installer\/test\/run.mjs/);
   assert.match(build, /--network=none --user node/);
   assert.match(build, /node packages\/installer\/test\/mutations.mjs/);

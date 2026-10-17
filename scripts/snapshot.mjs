@@ -3,6 +3,8 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 
 export const files = JSON.parse(readFileSync(new URL('./snapshot-files.json', import.meta.url)));
+// These namespaces are snapshot-owned, never release-tool/control inputs.
+export const roots = ['packages/installer', 'packages/opencode-chi-mentions', 'packages/chi-native', 'backend/scripts'];
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 // A filename is data, not a separators-delimited identifier. Reject every
 // control character up front so a tab or newline in a name can never be
@@ -37,7 +39,7 @@ export function verifySnapshot(root, tag, isolated = false) {
   // on every component; public release tooling is never an export input.
   if (!lstatSync(root).isDirectory() || lstatSync(root).isSymbolicLink()) throw new Error('Unsafe snapshot root');
   if (isolated && JSON.stringify(regularFiles(root)) !== JSON.stringify([...files, '.installer-snapshot.json'].sort())) throw new Error('Snapshot allowlist mismatch');
-  if (JSON.stringify(regularFiles(join(root, 'packages/installer')).map(path => `packages/installer/${path}`)) !== JSON.stringify(files.filter(path => path.startsWith('packages/installer/')).sort())) throw new Error('Installer allowlist mismatch');
+  for (const directory of roots) if (JSON.stringify(regularFiles(join(root, directory)).map(path => `${directory}/${path}`)) !== JSON.stringify(files.filter(path => path.startsWith(directory + '/')).sort())) throw new Error('Installer allowlist mismatch');
   return verifyInputs(root, tag);
 }
 

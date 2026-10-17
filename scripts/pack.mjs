@@ -12,6 +12,6 @@ if (records.length !== 1) throw new Error('Expected exactly one packed installer
 const [packed] = records;
 if (packed.filename !== `henkaku-center-chi-${pkg.version}.tgz` || packed.name !== pkg.name || packed.version !== pkg.version) throw new Error('Wrong package');
 const allowed = /^(?:package\.json|README\.md|TRUST\.md|LICENSE|dist\/[a-z]+\.js|toolchain\/package(?:-lock)?\.json)$/;
-if (packed.files.some(file => !allowed.test(file.path)) || !['dist/cli.js', 'dist/sigstore.js', 'LICENSE', 'TRUST.md'].every(path => packed.files.some(file => file.path === path))) throw new Error('Unexpected or incomplete npm payload');
+if (packed.files.some(file => !allowed.test(file.path)) || !['dist/cli.js', 'dist/sigstore.js', 'dist/plugin.js', 'LICENSE', 'TRUST.md'].every(path => packed.files.some(file => file.path === path))) throw new Error('Unexpected or incomplete npm payload');
 const bytes = readFileSync(`artifacts/${packed.filename}`);
 for (const algorithm of ['sha256', 'sha512']) writeFileSync(`artifacts/${algorithm.toUpperCase()}SUMS`, `${createHash(algorithm).update(bytes).digest('hex')}  ${packed.filename}\n`);

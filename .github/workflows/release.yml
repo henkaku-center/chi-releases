@@ -31,6 +31,8 @@ jobs:
       - run: npm run test:mutations
       - run: npm ci --prefix packages/installer --ignore-scripts
       - run: npm --prefix packages/installer run build
+      - name: Public-only bundled plugin dependency and behavior gate
+        run: node packages/installer/test/public-plugin.mjs "$RUNNER_TEMP/public-plugin"
       - name: Isolated macOS contract
         if: runner.os == 'macOS'
         run: node packages/installer/test/run.mjs
