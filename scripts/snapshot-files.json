@@ -43,6 +43,7 @@
   "packages/installer/test/provenance.mjs",
   "packages/installer/test/run.mjs",
   "packages/installer/test/public-plugin.mjs",
+  "packages/installer/test/public-runtime.mjs",
   "packages/installer/toolchain/package-lock.json",
   "packages/installer/toolchain/package.json",
   "packages/installer/tsconfig.json"
