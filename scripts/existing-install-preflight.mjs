@@ -1,11 +1,19 @@
 // Read-only inventory, not adoption or a compatibility certificate. Never loads
 // runtime config/auth, opens native databases, or starts/discovers a daemon.
 import { readFileSync, readSync, readdirSync, lstatSync, realpathSync, openSync, fstatSync, closeSync, constants } from 'node:fs';
-import { join, delimiter, resolve } from 'node:path';
+import { join, delimiter, resolve, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+function directoryAncestors(path) {
+  const absolute = resolve(path), parent = dirname(absolute);
+  if (parent !== absolute) directoryAncestors(parent);
+  const info = lstatSync(absolute);
+  if (!info.isDirectory() || info.isSymbolicLink()) throw Error('Linked or non-directory ancestor refused');
+}
+
 export function countAgentRecords(directory) {
+  directoryAncestors(directory);
   const result = { records: 0, opencodeRecords: 0, nativeMappings: 0, invalid: 0, complete: false };
   const root = lstatSync(directory);
   if (!root.isDirectory() || root.isSymbolicLink()) throw Error('Expected an explicit real agents directory');
@@ -22,6 +30,7 @@ export function countAgentRecords(directory) {
     if (files.length > 10000) throw Error('Record-count bound exceeded');
   }
   for (const path of files) {
+    directoryAncestors(dirname(path));
     const fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
     try {
       const stat = fstatSync(fd);
@@ -73,7 +82,7 @@ function binary(name) {
 export function nvmPackageCandidates(home) {
   const root = join(home, '.nvm/versions/node');
   let versions;
-  try { versions = readdirSync(root, { withFileTypes: true }); }
+  try { directoryAncestors(root); versions = readdirSync(root, { withFileTypes: true }); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
   if (versions.length > 100) throw Error('Node installation inventory bound exceeded');
   const candidates = [];
@@ -83,6 +92,7 @@ export function nvmPackageCandidates(home) {
       const path = join(root, version.name, 'lib/node_modules', name, 'package.json');
       let fd;
       try {
+        directoryAncestors(dirname(path));
         fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
         const stat = fstatSync(fd);
         if (!stat.isFile() || stat.size > 65536) throw Error('Package metadata bound exceeded');

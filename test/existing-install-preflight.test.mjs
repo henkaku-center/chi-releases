@@ -1,9 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { tmpdir as osTmpdir } from 'node:os';
 import { countAgentRecords, nvmPackageCandidates } from '../scripts/existing-install-preflight.mjs';
+const tmpdir = () => realpathSync(osTmpdir());
 
 test('bounded source-layout inventory reports counts only, without changing records', t => {
   const dir = mkdtempSync(join(tmpdir(), 'adoption-metadata-')); t.after(() => rmSync(dir, { recursive: true, force: true }));
@@ -36,4 +37,17 @@ test('different nvm versions reveal package candidates without executing them or
   assert.deepEqual(found.map(x => x.version).sort(), ['0.6.1', '2.0.22']);
   assert(found.every(x => x.active.startsWith('unknown')));
   assert.doesNotMatch(JSON.stringify(found), /NEVER_EXECUTE|PRIVATE_FIXTURE/);
+});
+
+test('agent-path and nvm-manifest ancestor links refuse before record/package reads', t => {
+  const root = mkdtempSync(join(tmpdir(), 'adoption-ancestors-')); t.after(() => rmSync(root, { recursive: true, force: true }));
+  const home = join(root, 'home'), elsewhere = join(root, 'elsewhere');
+  mkdirSync(home); mkdirSync(elsewhere); mkdirSync(join(elsewhere, 'agents'));
+  symlinkSync(elsewhere, join(home, 'linked'));
+  assert.throws(() => countAgentRecords(join(home, 'linked/agents')), /ancestor/);
+  mkdirSync(join(home, '.nvm/versions/node/v24.20.0/lib/node_modules'), { recursive: true });
+  mkdirSync(join(elsewhere, 'cli'));
+  writeFileSync(join(elsewhere, 'cli/package.json'), JSON.stringify({ name: '@opencode/cli', version: '2.0.22' }));
+  symlinkSync(elsewhere, join(home, '.nvm/versions/node/v24.20.0/lib/node_modules/@opencode'));
+  assert.throws(() => nvmPackageCandidates(home), /ancestor/);
 });
