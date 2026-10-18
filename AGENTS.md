@@ -103,7 +103,7 @@ on that host (no npm installation, sudo, service start, auth flow or database re
 ```sh
 preflight_dir=$(mktemp -d)
 curl --fail --silent --show-error --proto '=https' \
-  https://raw.githubusercontent.com/henkaku-center/chi-releases/bbd270c4a823577912f5b33a81fc21b89c176a04/scripts/existing-install-preflight.mjs \
+  https://raw.githubusercontent.com/henkaku-center/chi-releases/db455066a42c5e90e86229caace86f8c9d87d64a/scripts/existing-install-preflight.mjs \
   -o "$preflight_dir/preflight.mjs"
 node "$preflight_dir/preflight.mjs"
 ```
