@@ -70,6 +70,33 @@ function binary(name) {
   }
   return { found: false };
 }
+export function nvmPackageCandidates(home) {
+  const root = join(home, '.nvm/versions/node');
+  let versions;
+  try { versions = readdirSync(root, { withFileTypes: true }); }
+  catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  if (versions.length > 100) throw Error('Node installation inventory bound exceeded');
+  const candidates = [];
+  for (const version of versions) {
+    if (!version.isDirectory() || !/^v\d+\.\d+\.\d+$/.test(version.name)) continue;
+    for (const name of ['@opencode/cli', '@getpaseo/cli']) {
+      const path = join(root, version.name, 'lib/node_modules', name, 'package.json');
+      let fd;
+      try {
+        fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+        const stat = fstatSync(fd);
+        if (!stat.isFile() || stat.size > 65536) throw Error('Package metadata bound exceeded');
+        const bytes = Buffer.alloc(stat.size);
+        if (readSync(fd, bytes, 0, bytes.length, 0) !== bytes.length) throw Error('Incomplete package metadata');
+        const metadata = JSON.parse(bytes.toString('utf8'));
+        if (metadata.name !== name || !/^\d+\.\d+\.\d+(?:[-+][a-zA-Z0-9.-]+)?$/.test(metadata.version)) throw Error('Unrecognized package metadata');
+        candidates.push({ name, version: metadata.version, nodeInstallation: version.name, manifest: path, uid: stat.uid, active: 'unknown; candidate metadata only' });
+      } catch (error) { if (error.code !== 'ENOENT') throw error; }
+      finally { if (fd !== undefined) closeSync(fd); }
+    }
+  }
+  return candidates;
+}
 export function preflight(agentsDirectory) {
   let distro = {}, kernel = '', pid1 = '';
   try { distro = Object.fromEntries(readFileSync('/etc/os-release', 'utf8').split('\n').filter(line => /^(ID|VERSION_ID)=/.test(line)).map(line => { const i = line.indexOf('='); return [line.slice(0, i), line.slice(i + 1).replace(/^"|"$/g, '')]; })); } catch {}
@@ -83,6 +110,8 @@ export function preflight(agentsDirectory) {
     userServiceManager: ['running', 'degraded', 'starting', 'offline', 'maintenance', 'stopping'].includes(service) ? service : 'unavailable or unrecognized',
     linger: ['yes', 'no'].includes(linger) ? linger : 'unknown',
     binaries: { opencode: binary('opencode'), paseo: binary('paseo') },
+    nvmPackageCandidates: process.env.HOME ? nvmPackageCandidates(process.env.HOME) : [],
+    packageDiscoveryCoverage: 'PATH plus conventional nvm npm-global manifests only; not evidence that other installations are absent',
     paseoAgentRecords: agentsDirectory ? countAgentRecords(resolve(agentsDirectory)) : 'unknown: no explicitly identified agents directory supplied',
     nativeSessionCount: 'unknown: no service startup/API/database access performed',
     acceptance: 'inventory only; WSL takeover is not validated',
