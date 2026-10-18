@@ -91,6 +91,71 @@ Release authority and outstanding operator actions are in
 
 ### Existing installations: consent and history come first
 
+**WSL with existing OpenCode 2.0.22 / Paseo 0.6.1:** do not run the fresh-host
+installer over that installation. Both Mac architectures passed fresh-host tests;
+Linux contract tests are **not WSL takeover acceptance**. Project sharing consent
+does not authorize uninstalling software, downgrading a native store or replacing
+its history with an empty host.
+
+The partner's local agent can collect one nonsecret preflight using Node already
+on that host (no npm installation, sudo, service start, auth flow or database read):
+
+```sh
+preflight_dir=$(mktemp -d)
+curl --fail --silent --show-error --proto '=https' \
+  https://raw.githubusercontent.com/henkaku-center/chi-releases/bbd270c4a823577912f5b33a81fc21b89c176a04/scripts/existing-install-preflight.mjs \
+  -o "$preflight_dir/preflight.mjs"
+node "$preflight_dir/preflight.mjs"
+```
+
+It reports Linux/architecture, WSL detection, distro/glibc, PID 1/systemd,
+read-only user-service-manager and linger status, executable/symlink paths,
+filesystem owners and `--version` output. It never prints raw error output or
+reads configuration/auth files, environment dumps, native databases or session
+bodies. Filesystem ownership is not proof of npm/Homebrew/desktop ownership;
+the local agent should identify that manager from its existing installation
+records, not run a replacement command.
+It also checks only the two known package names' manifests under conventional
+nvm Node installations, without executing those candidates. A binary missing
+from SSH's PATH may exist under another Node version; neither a candidate manifest
+nor filesystem ownership establishes which daemon is running. Other package
+managers/custom locations remain outside this bounded discovery coverage.
+
+If the agent already knows the active Paseo home from local installation context,
+repeat with its exact `agents` directory as the sole argument. Do not guess a
+Windows store or assume `~/.paseo` is active. Optional counts cover the source
+Paseo layout's agent records, OpenCode records and nonempty persistence mappings;
+IDs/titles/configuration are never printed. Counts are a bounded live observation,
+not a consistent backup or native-session count. Missing/invalid metadata is
+reported as unknown/incomplete, not zero sessions. Native session count is
+deliberately unknown: ordinary session-list/API commands can start a service.
+Keep raw records and credentials local; return only this summary, the package
+manager, and whether a custom home or more than one installation exists.
+
+**Delivery path, not a downgrade promise:** source inspection found no Chi
+capture integration in public Paseo `v0.6.1` (`3904190836e4d82577849f3ca053c36ef65f9e65`).
+Adding a destination alone cannot enable it. Its agent-storage source is identical
+to the 1.0.0 pinned fork's file, a useful fixture starting point—not proof that
+whole-host takeover/reopening works. OpenCode `v2.0.22`
+(`527f0b931d1f9b3ebd34e106c51b31ce5db5b075`) has the same session-transfer schema
+as the pinned `2.0.15-chi.2`, but database schema/lifecycle code differs. Never open
+the only 2.0.22 store with the older target. Use the existing public session
+export/import interface only in an approved isolated rehearsal, not by copying
+operational data to CI or posting exports here.
+
+The bounded implementation gate is: synthetic source/target fixtures must prove
+reopenable sessions with preserved IDs, ordered payloads, parent relationships and
+Paseo persistence mappings; then verify a forward-compatible Chi runtime (or a
+proved isolated transfer), WSL user-service supervision and rollback. Do not
+simply add 2.0.22 to a supported-version allowlist. After those tests, the local
+agent can rehearse the exact approved target against a private consistent copy,
+compare counts and reopenability without a model turn, and report results only.
+Actual replacement still requires consent to that plan and must preserve the
+original binaries/stores/configuration. No such takeover is certified yet.
+Track implementation and acceptance in [issue #3](https://github.com/henkaku-center/chi-releases/issues/3).
+Repository catalog/provisioning remains a separate deployment gate: GitHub write
+permission and a local mapping alone do not establish backend readiness.
+
 The target runtime is the release's **Chi-capable Paseo and OpenCode forks**,
 not arbitrary upstream builds. The public release does not authorize replacing
 another installation or bypassing its release verification.
