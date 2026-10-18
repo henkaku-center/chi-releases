@@ -103,7 +103,7 @@ on that host (no npm installation, sudo, service start, auth flow or database re
 ```sh
 preflight_dir=$(mktemp -d)
 curl --fail --silent --show-error --proto '=https' \
-  https://raw.githubusercontent.com/henkaku-center/chi-releases/728f68abb6ba5d904bd5110109684967d67c9a43/scripts/existing-install-preflight.mjs \
+  https://raw.githubusercontent.com/henkaku-center/chi-releases/bbd270c4a823577912f5b33a81fc21b89c176a04/scripts/existing-install-preflight.mjs \
   -o "$preflight_dir/preflight.mjs"
 node "$preflight_dir/preflight.mjs"
 ```
@@ -115,6 +115,11 @@ reads configuration/auth files, environment dumps, native databases or session
 bodies. Filesystem ownership is not proof of npm/Homebrew/desktop ownership;
 the local agent should identify that manager from its existing installation
 records, not run a replacement command.
+It also checks only the two known package names' manifests under conventional
+nvm Node installations, without executing those candidates. A binary missing
+from SSH's PATH may exist under another Node version; neither a candidate manifest
+nor filesystem ownership establishes which daemon is running. Other package
+managers/custom locations remain outside this bounded discovery coverage.
 
 If the agent already knows the active Paseo home from local installation context,
 repeat with its exact `agents` directory as the sole argument. Do not guess a
