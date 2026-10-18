@@ -68,21 +68,87 @@ gh --version
 gh auth status
 ```
 
-Release 1.0.0 pins Node 24.18.0, gh 2.70.0 and gitleaks 8.24.2. Follow the
+Release 1.0.0 pins Node 24.18.0, gh 2.70.0 and gitleaks 8.30.1. Follow the
 [exact installer README](https://github.com/henkaku-center/chi-releases/blob/chi-v1.0.0/packages/installer/README.md)
 for the choices-file schema and
 [trust policy](https://github.com/henkaku-center/chi-releases/blob/chi-v1.0.0/packages/installer/TRUST.md)
 for signature/provenance verification. Tarball SHA-256:
 `d61aeb1c51a001bef305f90bca469a3d295091fa7a09099ca70cd927b1ff8c9c`.
 
-On a fresh supported host, after verification and agreement on the choices:
+### Joining Henkaku: complete choices file
 
-```sh
-npx --yes @henkaku-center/chi@1.0.0 install --choices /absolute/path/choices.json --dry-run
+For a user explicitly joining **chi.henkaku.center**, these public deployment
+values are already known. Agents should supply them, not ask the user to discover
+a backend URL or clone private Chi:
+
+| Purpose | Value |
+| --- | --- |
+| Browser app and pairing UI | `https://chi.henkaku.center` |
+| Installer `endpoint` (Chi backend base URL) | `https://chi-backend-vadmp23swa-an.a.run.app` — **no `/api` suffix** |
+| Installer destination `name` | `Henkaku` |
+| Paseo relay (already pinned; not a choices field) | `wss://relay.paseo.sh` |
+
+Do not substitute the browser URL or relay for `endpoint`. This is Henkaku's
+explicit setup recipe, **not a universal installer fallback**: self-hosted users
+must select their own deployment's backend URL and destination name.
+
+Save this complete JSON as `$HOME/chi-choices.json` (preserve/review an existing
+file rather than overwriting it). It installs with **no repository uploads**:
+
+<!-- henkaku-choices-1.0.0 -->
+```json
+{
+  "endpoint": "https://chi-backend-vadmp23swa-an.a.run.app",
+  "name": "Henkaku",
+  "mappings": [],
+  "permissions": "ask",
+  "autoUpdate": false,
+  "linger": false
+}
 ```
 
-Review the exact plan, then omit `--dry-run` and confirm interactively. Use the
-person's own GitHub login and provider login. Pairing, repository admission and
+- `mappings: []` keeps every repository local; it is not shared-project setup.
+- `permissions: "ask"` is the supported execution-permission choice.
+- `autoUpdate: false` does not enable unattended daemon updates. Updates and
+  native-tool drain are separate from fresh installation.
+- `linger: false` requests no Linux user linger; macOS does not need it.
+- `bots` is optional and omitted. Do not invent an agent identity or ask for
+  credentials to fill this file. GitHub and model-provider login are separate.
+
+**Opt in only the project and audience the user selected.** If the agent already
+knows that context, use it rather than asking the user to rediscover it. Replace
+the `mappings` array with the following shape, substituting the actual owner and
+repository (not a URL, local path, or organization wildcard):
+
+<!-- selected-project-mappings-1.0.0 -->
+```json
+[
+  { "repo": "github:owner/project", "audience": "shared" }
+]
+```
+
+`shared` means authorized repository readers, not public internet access;
+`private` is the other supported audience. A mapping does not grant repository
+access. Enabling one allows managed capture for that exact repository, including
+pending history: confirm its scope before applying. Do not infer consent to
+upload existing history, widen to `github:owner/*`, retarget an existing
+destination, or replace existing mappings. Existing hosts must use the preserved
+configuration/consent procedure below, not this fresh-host file.
+
+On a fresh supported host, preview the complete choices:
+
+```sh
+npx --yes @henkaku-center/chi@1.0.0 install --choices "$HOME/chi-choices.json" --dry-run
+```
+
+Check the printed endpoint, exact mappings/audience and `ask` permissions. If they
+match the user's choices, run the same command without `--dry-run` and confirm
+interactively. The installer's own GitHub login must be the user's account; use
+the installer-reported login/retry instruction if needed, never copy tokens.
+At the end, use the private pairing offer in the browser app's **Paste pairing
+link** UI; if deferred, run the exact owned `chi pair` command the installer prints
+in an interactive terminal. Do not save or publish the offer. Sign in to Chi and
+the chosen model provider with the user's own accounts. Pairing, repository admission and
 authorized read/mention acceptance remain separate; never test by messaging a
 collaborator without approved content. Do not run this recipe over an existing
 foreign installation: follow the preservation boundary below.
